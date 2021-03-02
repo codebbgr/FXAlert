@@ -28,6 +28,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 
 /**
  * Builder-style class for creating
@@ -170,20 +171,47 @@ public class FlashBuilder {
      * @param style The JavaFX CSS style
      * @return The FlashBuilder
      */
-    public FlashBuilder withPaneStyle(String style) {
+    public FlashBuilder withStyle(String style) {
         this.paneStyle = style;
+        return this;
+    }
+
+    /**
+     * Sets the stylesheet for the Flash alert's content Node
+     * @param url Path to a stylesheet
+     * @return the FlashBuilder
+     */
+    public FlashBuilder withStylesheet(String url) {
+        this.content.getScene().getStylesheets().add(url);
+        return this;
+    }
+
+    /**
+     * Sets the initOwner property of the Flash notification.
+     * @param window Owning window of the Flash Alert
+     * @return the FlashBuilder
+     */
+    public FlashBuilder withInitOwner(Window window) {
+        this.initOwner = window;
         return this;
     }
 
     /**
      * Shows the "flash" notification for a brief period of
      * time in the lower-right corner of the user's active screen.
+     * The Flash Alert will cause a new taskbar icon to be created
+     * unless the {@code withInitOwner()} methods has been previously
+     * called.
      */
     public void show() {
-        Stage stage = new Stage(StageStyle.TRANSPARENT);
-        stage.setAlwaysOnTop(true);
+        Stage stage = new Stage(StageStyle.UNDECORATED);
         stage.setIconified(false);
+        stage.setAlwaysOnTop(true);
         stage.setScene(buildGrid());
+
+        if (this.initOwner != null) {
+            stage.initOwner(this.initOwner);
+        }
 
         if (FXAlert.getIconImage() != null) {
             stage.getIcons().add(FXAlert.getIconImage());
@@ -261,6 +289,7 @@ public class FlashBuilder {
         return scene;
     }
 
+
     private final Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
     private Node header;
     private Node content;
@@ -268,5 +297,6 @@ public class FlashBuilder {
     private double sizeX;
     private double sizeY;
     private String paneStyle;
+    private Window initOwner;
 
 }

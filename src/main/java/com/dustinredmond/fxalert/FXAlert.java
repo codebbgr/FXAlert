@@ -21,6 +21,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
+import javafx.stage.Window;
 
 /**
  * Class for easily building JavaFX Alerts.
@@ -139,7 +140,7 @@ public class FXAlert {
      */
     public static boolean showConfirmed(String title, String header, String content) {
         Optional<ButtonType> result = confirm().withText(title, header, content).showAndWait();
-        return result.isPresent() && "Ok".equals(result.get().getText());
+        return result.isPresent() && "OK".equalsIgnoreCase(result.get().getText());
     }
 
     /**
@@ -304,6 +305,17 @@ public class FXAlert {
      */
     public static FlashBuilder flash() {
         return new FlashBuilder();
+    }
+
+    /**
+     * Start constructing a "flash" alert at the bottom-right of the active screen.
+     * Sets the initOwner of the flash alert, causing no additional task bar icons
+     * to be created. Prefer {@code flash(Window initOwner} to {@code flash()}
+     * @param initOwner The owning Window of the flash notification
+     * @return FlashBuilder API
+     */
+    public static FlashBuilder flash(Window initOwner) {
+        return new FlashBuilder().withInitOwner(initOwner);
     }
 
     /**
